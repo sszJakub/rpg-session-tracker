@@ -15,22 +15,40 @@ def add_player():
     name = input("Jak nazywa się gracz? ")
     cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     connection.commit()
+    print()
 
 def display_all_players():
     cursor.execute("SELECT * FROM players") 
     for row in cursor.fetchall():
         print(row)
+    print()
 
 def delete_player():
     player_id = input("Jakie id gracza chcesz usunąć? ")
+    if not player_id.isdigit():
+        print("Nieprawidłowe id. Proszę podać liczbę.")
+        return
     cursor.execute("DELETE FROM players WHERE id = %s", (player_id,))
     connection.commit()
+    if cursor.rowcount > 0:
+        print("Gracz został usunięty.")
+    else:
+        print("Nie znaleziono gracza o podanym id.")
+    print()
 
 def update_player():
     player_id = input("Jakie id gracza chcesz zaktualizować? ")
+    if not player_id.isdigit():
+        print("Nieprawidłowe id. Proszę podać liczbę.")
+        return
     new_name = input("Jak ma nazywać się gracz? ")
     cursor.execute("UPDATE players SET name = %s WHERE id = %s", (new_name, player_id))
     connection.commit()
+    if cursor.rowcount > 0:
+        print("Gracz został zaktualizowany.")
+    else:
+        print("Nie znaleziono gracza o podanym id.")
+    print()
 
 
 
