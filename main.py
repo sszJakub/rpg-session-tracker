@@ -12,10 +12,10 @@ cursor = connection.cursor()
 
 
 def add_player():
-    name = input("Jak nazywa się gracz? ")
+    name = input("What is the player's name? ")
     cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     connection.commit()
-    print()
+    print("Player has been added.")
 
 def display_all_players():
     cursor.execute("SELECT * FROM players") 
@@ -24,30 +24,30 @@ def display_all_players():
     print()
 
 def delete_player():
-    player_id = input("Jakie id gracza chcesz usunąć? ")
+    player_id = input("Which player id do you want to delete? ")
     if not player_id.isdigit():
-        print("Nieprawidłowe id. Proszę podać liczbę.")
+        print("Invalid id. Please enter a number.")
         return
     cursor.execute("DELETE FROM players WHERE id = %s", (player_id,))
     connection.commit()
     if cursor.rowcount > 0:
-        print("Gracz został usunięty.")
+        print("Player has been deleted.")
     else:
-        print("Nie znaleziono gracza o podanym id.")
+        print("No player found with the given id.")
     print()
 
 def update_player():
-    player_id = input("Jakie id gracza chcesz zaktualizować? ")
+    player_id = input("Which player id do you want to update? ")
     if not player_id.isdigit():
-        print("Nieprawidłowe id. Proszę podać liczbę.")
+        print("Invalid id. Please enter a number.")
         return
-    new_name = input("Jak ma nazywać się gracz? ")
+    new_name = input("What should be the new name of the player? ")
     cursor.execute("UPDATE players SET name = %s WHERE id = %s", (new_name, player_id))
     connection.commit()
     if cursor.rowcount > 0:
-        print("Gracz został zaktualizowany.")
+        print("Player has been updated.")
     else:
-        print("Nie znaleziono gracza o podanym id.")
+        print("Player not found with the given id.")
     print()
 
 
@@ -57,13 +57,13 @@ def update_player():
 
 def main():
     while True:
-        print("1. Dodaj gracza")
-        print("2. Wyświetl graczy")
-        print("3. Usuń gracza")
-        print("4. Zaktualizuj gracza")
-        print("5. Wyjdź")
+        print("1. Add player")
+        print("2. Display players")
+        print("3. Delete player")
+        print("4. Update player")
+        print("5. Exit")
 
-        choice = input("wybierz opcję: ")
+        choice = input("Choose an option: ")
 
         if choice == "1":
             add_player()
