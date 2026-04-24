@@ -21,7 +21,7 @@ def add_player():
 def display_all_players():
     cursor.execute("SELECT * FROM players") 
     for row in cursor.fetchall():
-        print(row)
+        print(f"ID: {row[0]}, Name: {row[1]}")
     print()
 
 def delete_player():
@@ -70,7 +70,7 @@ def manage_players():
         elif choice == "4":
             update_player()
         elif choice == "5":
-            break()
+            break
 
 
 
@@ -93,11 +93,46 @@ def add_character():
 
 
 def display_all_characters():
-    cursor.execute("SELECT * FROM characters")
+    cursor.execute("""
+        SELECT characters.id, characters.name, characters.race, characters.character_class, players.name
+        FROM characters
+        JOIN players ON characters.player_id = players.id
+    """)
     for row in cursor.fetchall():
-        print(row)
+        print("----------------------------")
+        print(f"ID: {row[0]} | Name: {row[1]} | Race: {row[2]} | Class: {row[3]} | Player: {row[4]}")
+    print("----------------------------\n")
     print()
 
+
+def show_character_details():
+    character_id = input("Enter character ID: ")
+
+    if not character_id.isdigit():
+        print("Invalid ID\n")
+        return
+
+    cursor.execute("""
+        SELECT characters.id, characters.name, characters.race, characters.character_class, players.name
+        FROM characters
+        JOIN players ON characters.player_id = players.id
+        WHERE characters.id = %s
+    """, (character_id,))
+
+    row = cursor.fetchone()
+
+    if row is None:
+        print("Character not found\n")
+        return
+
+    print("\nCharacter details:")
+    print("----------------------------")
+    print(f"ID: {row[0]}")
+    print(f"Name: {row[1]}")
+    print(f"Race: {row[2]}")
+    print(f"Class: {row[3]}")
+    print(f"Player: {row[4]}")
+    print("----------------------------\n")
 
 
 def delete_character():
@@ -135,23 +170,26 @@ def update_character():
 def manage_characters():
     while True:
         print("1. Add character")
-        print("2. Display characters")
-        print("3. Delete character")
-        print("4. Update character")
-        print("5. Return to main menu")
+        print("2. Display character details")
+        print("3. Display all characters")
+        print("4. Delete character")
+        print("5. Update character")
+        print("6. Return to main menu")
 
         choice = input("Choose an option: ")
 
         if choice == "1":
             add_character()
         elif choice == "2":
-            display_all_characters()
+            show_character_details()
         elif choice == "3":
-            delete_character()
+            display_all_characters()
         elif choice == "4":
-            update_character()
+            delete_character()
         elif choice == "5":
-            break()
+            update_character()
+        elif choice == "6":
+            break
 
 
 def exit_program():
