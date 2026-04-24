@@ -1,1 +1,4 @@
 credentials.py
+.venv/
+__pycache__/
+.env
