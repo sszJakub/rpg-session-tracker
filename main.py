@@ -21,7 +21,9 @@ def add_player():
 def display_all_players():
     cursor.execute("SELECT * FROM players") 
     for row in cursor.fetchall():
-        print(f"ID: {row[0]}, Name: {row[1]}")
+        print("----------------------------")
+        print(f"ID: {row[0]} | Name: {row[1]}")
+        print("----------------------------\n")
     print()
 
 def delete_player():
