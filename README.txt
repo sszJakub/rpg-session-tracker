@@ -23,13 +23,16 @@ mysql-connector-python
 ### Clone the repository:
 git clone https://github.com/sszJakub/rpg-session-tracker.git
 cd rpg-session-tracker
+
 ### Install dependencies:
 pip install -r requirements.txt
+
 ### Create a credentials.py file:
-    "host": "localhost",
-    "user": "your_user",
-    "password": "your_password",
-    "database": "rpg_db"
+    "my_host": "localhost",
+    "my_user": "your_user",
+    "my_password": "your_password",
+    "my_database": "rpg_db"
+
 ### Create database and tables in MySQL.
 
 ---
