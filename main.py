@@ -51,43 +51,48 @@ def update_player():
     print()
 
 def manage_players():
-    print("1. Add player")
-    print("2. Display players")
-    print("3. Delete player")
-    print("4. Update player")
-    print("5. Exit")
+    while True:
+        print("1. Add player")
+        print("2. Display players")
+        print("3. Delete player")
+        print("4. Update player")
+        print("5. Return to main menu")
 
-    choice = input("Choose an option: ")
+        choice = input("Choose an option: ")
 
-    if choice == "1":
-        add_player()
-    elif choice == "2":
-        display_all_players()
-    elif choice == "3":
-        delete_player()
-    elif choice == "4":
-        update_player()
-    elif choice == "5":
-        exit_program()
+        if choice == "1":
+            add_player()
+        elif choice == "2":
+            display_all_players()
+        elif choice == "3":
+            delete_player()
+        elif choice == "4":
+            update_player()
+        elif choice == "5":
+            break()
 
 
 
 def add_character():
-    name = input("What is the character's name?")
-    race = input("What is the character's race?")
-    class_ = input("What is the character's class? ")
+    name = input("What is the character's name? ")
+    race = input("What is the character's race? ")
+    character_class = input("What is the character's class? ")
     player_id = input("Which player id does the character belong to? ")
     if not player_id.isdigit():
         print("Invalid player id. Please enter a number.")
         return
-    cursor.execute("INSERT INTO characters (name, race, class, player_id) VALUES (%s, %s, %s, %s)", (name, race, class_, player_id))
+    cursor.execute("SELECT id FROM players WHERE id = %s", (player_id,))
+    if cursor.fetchone() is None:
+        print("Player does not exist.")
+        return
+    cursor.execute("INSERT INTO characters (name, race, character_class, player_id) VALUES (%s, %s, %s, %s)", (name, race, character_class, player_id))
     connection.commit()
     print("Character has been added.")
     print()
 
 
 def display_all_characters():
-    cursor.execute("SELECTO * FROM characters")
+    cursor.execute("SELECT * FROM characters")
     for row in cursor.fetchall():
         print(row)
     print()
@@ -95,10 +100,11 @@ def display_all_characters():
 
 
 def delete_character():
-    character_id = input("Which character id do you want to delete?")
+    character_id = input("Which character id do you want to delete? ")
     if not character_id.isdigit():
         print("Invalid id. Please enter a number.")
         return
+    
     cursor.execute("DELETE FROM characters WHERE id = %s", (character_id,))
     connection.commit()
     if cursor.rowcount > 0:        
@@ -109,7 +115,7 @@ def delete_character():
 
 
 def update_character():
-    character_id = input("Which character id do you want to update?")
+    character_id = input("Which character id do you want to update? ")
     if not character_id.isdigit():
         print("Invalid id. Please enter a number.")
         return
@@ -126,24 +132,25 @@ def update_character():
 
 
 def manage_characters():
-    print("1. Add character")
-    print("2. Display characters")
-    print("3. Delete character")
-    print("4. Update character")
-    print("5. Exit")
+    while True:
+        print("1. Add character")
+        print("2. Display characters")
+        print("3. Delete character")
+        print("4. Update character")
+        print("5. Return to main menu")
 
-    choice = input("Choose an option: ")
+        choice = input("Choose an option: ")
 
-    if choice == "1":
-        add_character()
-    elif choice == "2":
-        display_all_characters()
-    elif choice == "3":
-        delete_character()
-    elif choice == "4":
-        update_character()
-    elif choice == "5":
-        exit_program()
+        if choice == "1":
+            add_character()
+        elif choice == "2":
+            display_all_characters()
+        elif choice == "3":
+            delete_character()
+        elif choice == "4":
+            update_character()
+        elif choice == "5":
+            break()
 
 
 def exit_program():
