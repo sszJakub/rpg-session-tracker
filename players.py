@@ -1,28 +1,36 @@
 import mysql.connector
 from mysql.connector import Error
 from credentials import my_host, my_user, my_password, my_database
-from db import connection, cursor
+from db import connection
 
 
 def add_player():
+    cursor = connection.cursor()
     name = input("What is the player's name? ")
     cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     connection.commit()
     print("Player has been added.")
 
 def display_all_players():
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM players") 
+    print("----------------------------")
     for row in cursor.fetchall():
-        print("----------------------------")
         print(f"ID: {row[0]} | Name: {row[1]}")
-        print("----------------------------\n")
-    print()
+    print("----------------------------\n")
 
 def delete_player():
-    player_id = input("Which player id do you want to delete? ")
-    if not player_id.isdigit():
-        print("Invalid id. Please enter a number.")
-        return
+    cursor = connection.cursor()
+    while True:
+        player_id = input("Which player id do you want to delete? ")
+        if not player_id.isdigit():
+            print("Invalid id. Please enter a number.")
+            continue
+        cursor.execute("SELECT id FROM players WHERE id = %s", (player_id,))
+        if cursor.fetchone() is None:
+            print("Player does not exist\n")
+            continue
+        break
     cursor.execute("DELETE FROM players WHERE id = %s", (player_id,))
     connection.commit()
     if cursor.rowcount > 0:
@@ -32,10 +40,17 @@ def delete_player():
     print()
 
 def update_player():
-    player_id = input("Which player id do you want to update? ")
-    if not player_id.isdigit():
-        print("Invalid id. Please enter a number.")
-        return
+    cursor = connection.cursor()
+    while True:
+        player_id = input("Which player id do you want to update? ")
+        if not player_id.isdigit():
+            print("Invalid id. Please enter a number.")
+            continue
+        cursor.execute("SELECT id FROM players WHERE id = %s", (player_id,))
+        if cursor.fetchone() is None:
+            print("Player does not exist\n")
+            continue
+        break
     new_name = input("What should be the new name of the player? ")
     cursor.execute("UPDATE players SET name = %s WHERE id = %s", (new_name, player_id))
     connection.commit()

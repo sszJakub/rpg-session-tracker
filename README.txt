@@ -41,8 +41,9 @@ pip install -r requirements.txt
 
 ## Run the app:
 python main.py
-Example
+Example:
 Add a player
+
 Assign characters to players
 Manage data via CLI menu
 

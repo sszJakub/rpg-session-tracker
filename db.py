@@ -8,5 +8,4 @@ connection = mysql.connector.connect(
     database = my_database
 )
 
-cursor = connection.cursor()
 

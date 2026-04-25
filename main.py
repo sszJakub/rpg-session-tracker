@@ -5,7 +5,7 @@ from events import *
 from sessions import *
 from players import *
 from characters import *
-from db import connection, cursor
+from db import connection
 
 
 def exit_program():

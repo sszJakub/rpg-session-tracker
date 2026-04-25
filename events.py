@@ -1,25 +1,47 @@
 import mysql.connector
 from mysql.connector import Error
 from credentials import my_host, my_user, my_password, my_database
-from db import connection, cursor
+from db import connection
 
 
 def add_event():
-    session_id = input("What is the session id? ")
+    cursor = connection.cursor()
+    while True:
+        session_id = input("What is the session id? ")
+        if not session_id.isdigit():
+            print("Invalid session id")
+            continue
+        cursor.execute("SELECT id FROM sessions WHERE id = %s", (session_id,))
+        if cursor.fetchone() is None:
+            print("Session does not exist\n")
+            continue
+        break
     description = input("What is the description of the event? ")
     cursor.execute("INSERT INTO events (session_id, description) VALUES (%s, %s)", (session_id, description))
     connection.commit()
     print("Event has been added.")
 
 def display_all_events():
-    cursor.execute("SELECT * FROM events")
+    cursor = connection.cursor()
+    cursor.execute("SELECT events.id, sessions.date, events.description FROM events JOIN sessions ON events.session_id = sessions.id")
     print("----------------------------")
     for row in cursor.fetchall():
-        print(f"ID: {row[0]} | Session ID: {row[1]} | Description: {row[2]}")
+        print(f"ID: {row[0]} | Session Date: {row[1]} | Description: {row[2]}")
     print("----------------------------\n")
 
 def show_events_for_session():
-    session_id = input("Enter session ID: ")
+    cursor = connection.cursor()
+    while True:
+        session_id = input("Enter session ID: ")
+        if not session_id.isdigit():
+            print("Invalid session id")
+            continue
+        cursor.execute("SELECT id FROM sessions WHERE id = %s", (session_id,))
+        
+        if cursor.fetchone() is None:
+            print("Session does not exist\n")
+            continue
+        break
     cursor.execute("SELECT * FROM events WHERE session_id = %s", (session_id,))
     print("----------------------------")
     for row in cursor.fetchall():
@@ -27,10 +49,18 @@ def show_events_for_session():
     print("----------------------------\n")
 
 def delete_event():
-    event_id = input("Which event id do you want to delete? ")
-    if not event_id.isdigit():
-        print("Invalid id. Please enter a number.")
-        return
+    cursor = connection.cursor()
+    while True:
+        event_id = input("Which event id do you want to delete? ")
+        if not event_id.isdigit():
+            print("Invalid id. Please enter a number.")
+            continue
+        cursor.execute("SELECT id FROM events WHERE id = %s", (event_id,))
+        
+        if cursor.fetchone() is None:
+            print("Event does not exist\n")
+            continue
+        break
     cursor.execute("DELETE FROM events WHERE id = %s", (event_id,))
     connection.commit()
     if cursor.rowcount > 0:
@@ -40,10 +70,18 @@ def delete_event():
     print()
 
 def update_event():
-    event_id = input("Which event id do you want to update? ")
-    if not event_id.isdigit():
-        print("Invalid id. Please enter a number.")
-        return
+    cursor = connection.cursor()
+    while True:
+        event_id = input("Which event id do you want to update? ")
+        if not event_id.isdigit():
+            print("Invalid id. Please enter a number.")
+            continue
+        cursor.execute("SELECT id FROM events WHERE id = %s", (event_id,))
+        
+        if cursor.fetchone() is None:
+            print("Event does not exist\n")
+            continue
+        break
     new_description = input("What should be the new description for the event? ")
     cursor.execute("UPDATE events SET description = %s WHERE id = %s", (new_description, event_id))
     connection.commit()
