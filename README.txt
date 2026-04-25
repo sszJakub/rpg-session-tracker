@@ -9,7 +9,9 @@
 - Add, update, delete and display characters
 - Link characters to players
 - Basic input validation
-
+- Add, update, delete and display sessions
+- Add, update, delete and display events
+- Link multiple events to one session and display all for this one session
 ---
 
 ## Tech Stack
@@ -47,6 +49,5 @@ Manage data via CLI menu
 ---
 
 ## Future Improvements
-- Sessions tracking
 - Better UI
 - Search functionality
