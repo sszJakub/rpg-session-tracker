@@ -83,7 +83,6 @@ def delete_character_from_db(character_id):
         print("Character has been deleted.")
     else:
         print("No character found with the given id.")
-    print()
 
 
 

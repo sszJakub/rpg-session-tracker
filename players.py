@@ -33,7 +33,6 @@ def delete_player_from_db(player_id):
         print("Player has been deleted.")
     else:
         print("No player found with the given id.")
-    print()
 
 def delete_player():
     cursor = connection.cursor()
@@ -48,6 +47,7 @@ def delete_player():
             continue
         break
     delete_player_from_db(player_id)
+    print()
 
 
 def update_player_in_db(player_id, new_name):
