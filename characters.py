@@ -4,6 +4,13 @@ from credentials import my_host, my_user, my_password, my_database
 from db import connection
 
 
+def add_character_to_db(name, race, character_class, player_id):
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO characters (name, race, character_class, player_id) VALUES (%s, %s, %s, %s)", (name, race, character_class, player_id))
+    connection.commit()
+    print("Character has been added.")
+
+
 def add_character():
     cursor = connection.cursor()
     name = input("What is the character's name? ")
@@ -19,9 +26,7 @@ def add_character():
             print("Player does not exist.")
             continue
         break
-    cursor.execute("INSERT INTO characters (name, race, character_class, player_id) VALUES (%s, %s, %s, %s)", (name, race, character_class, player_id))
-    connection.commit()
-    print("Character has been added.")
+    add_character_to_db(name, race, character_class, player_id)
     print()
 
 
@@ -56,13 +61,10 @@ def show_character_details():
         JOIN players ON characters.player_id = players.id
         WHERE characters.id = %s
     """, (character_id,))
-
     row = cursor.fetchone()
-
     if row is None:
         print("Character not found\n")
         return
-
     print("----------------------------")
     print("\nCharacter details:")
     print(f"ID: {row[0]}")
@@ -71,6 +73,18 @@ def show_character_details():
     print(f"Class: {row[3]}")
     print(f"Player: {row[4]}")
     print("----------------------------\n")
+
+
+def delete_character_from_db(character_id):
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM characters WHERE id = %s", (character_id,))
+    connection.commit()
+    if cursor.rowcount > 0:
+        print("Character has been deleted.")
+    else:
+        print("No character found with the given id.")
+    print()
+
 
 
 def delete_character():
@@ -85,14 +99,19 @@ def delete_character():
             print("Character does not exist")
             continue
         break
-    cursor.execute("DELETE FROM characters WHERE id = %s", (character_id,))
-    connection.commit()
-    if cursor.rowcount > 0:        
-        print("Character has been deleted.")
-    else:        
-        print("No character found with the given id.")
+    delete_character_from_db(character_id)
     print()
 
+
+
+def update_character_in_db(character_id, new_name, new_race, new_class, new_player_id):
+    cursor = connection.cursor()
+    cursor.execute("UPDATE characters SET name = %s, race = %s, character_class = %s, player_id = %s WHERE id = %s", (new_name, new_race, new_class, new_player_id, character_id))
+    connection.commit()
+    if cursor.rowcount > 0:
+        print("Character has been updated.")
+    else:
+        print("Character not found with the given id.")
 
 def update_character():
     cursor = connection.cursor()
@@ -109,12 +128,17 @@ def update_character():
     new_name = input("What should be the new name of the character? ")
     new_race = input("What should be the new race of the character? ")
     new_class = input("What should be the new class of the character? ")
-    cursor.execute("UPDATE characters SET name = %s, race = %s, class = %s WHERE id = %s", (new_name, new_race, new_class, character_id))
-    connection.commit()
-    if cursor.rowcount > 0:
-        print("Character has been updated.")
-    else:
-        print("Character not found with the given id.")
+    new_player_id = input("Which player id does the character belong to? ")
+    while True:
+        if not new_player_id.isdigit():
+            print("Invalid player id. Please enter a number.")
+            continue
+        cursor.execute("SELECT id FROM players WHERE id = %s", (new_player_id,))
+        if cursor.fetchone() is None:
+            print("Player does not exist.")
+            continue
+        break
+    update_character_in_db(character_id, new_name, new_race, new_class, new_player_id)
     print()
 
 
