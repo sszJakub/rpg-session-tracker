@@ -2,7 +2,7 @@ import pytest
 from players import *
 import time
 
-
+# Positive test cases 
 def test_add_player_to_db():
     try:
         name = f"Test_Player_{int(time.time())}"
@@ -53,8 +53,28 @@ def test_update_player_in_db():
             delete_player_from_db(player_id)
 
 
+# Negative test cases
+def test_add_player_to_db_empty_name():
+    with pytest.raises(ValueError):
+        add_player_to_db("")
+
+def test_delete_player_from_db_nonexistent():
+    non_existent_id = 999999
+    delete_player_from_db(non_existent_id)
+    cursor = connection.cursor(buffered=True)
+    cursor.execute("SELECT id FROM players WHERE id = %s", (non_existent_id,))
+    result = cursor.fetchone()
+    assert result is None
 
 
+def test_update_player_in_db_nonexistent():
+    non_existent_id = 999999
+    new_name = "Should_Not_Update"
+    update_player_in_db(non_existent_id, new_name)
+    cursor = connection.cursor(buffered=True)
+    cursor.execute("SELECT id FROM players WHERE id = %s", (non_existent_id,))
+    result = cursor.fetchone()
+    assert result is None
 
 
 

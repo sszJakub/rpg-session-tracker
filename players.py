@@ -7,6 +7,8 @@ from db import connection
 
 
 def add_player_to_db(name):
+    if not name:
+        raise ValueError("Name cannot be empty.")
     cursor = connection.cursor()
     cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     connection.commit()
