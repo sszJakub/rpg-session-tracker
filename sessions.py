@@ -4,13 +4,21 @@ from credentials import my_host, my_user, my_password, my_database
 from db import connection
 
 
+
+def add_session_to_db(date, notes):
+    if not date or not notes:
+        raise ValueError("Date and notes must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO sessions (date, notes) VALUES (%s, %s)", (date, notes))
+    connection.commit()
+    print("Session has been added.")
+
 def add_session():
     cursor = connection.cursor()
     date = input("What is the date of the session? ")
     notes = input("Any notes for the session? ")
-    cursor.execute("INSERT INTO sessions (date, notes) VALUES (%s, %s)", (date, notes))
-    connection.commit()
-    print("Session has been added.")
+    add_session_to_db(date, notes)
+    print()
 
 def display_all_sessions():
     cursor = connection.cursor()
@@ -19,6 +27,18 @@ def display_all_sessions():
     for row in cursor.fetchall():
         print(f"ID: {row[0]} | Date: {row[1]} | Notes: {row[2]}")
     print("----------------------------\n")
+
+
+def delete_session_from_db(session_id):
+    if not session_id:
+        raise ValueError("Session ID must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM sessions WHERE id = %s", (session_id,))
+    connection.commit()
+    if cursor.rowcount > 0:
+        print("Session has been deleted.")
+    else:
+        print("No session found with the given id.")
 
 def delete_session():
     cursor = connection.cursor()
@@ -33,13 +53,21 @@ def delete_session():
             print("Session does not exist\n")
             continue
         break
-    cursor.execute("DELETE FROM sessions WHERE id = %s", (session_id,))
+    delete_session_from_db(session_id)
+    print()
+
+
+def update_session_in_db(session_id, new_date, new_notes):
+    if not session_id or not new_date or not new_notes:
+        raise ValueError("Session ID, new date, and new notes must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("UPDATE sessions SET date = %s, notes = %s WHERE id = %s", (new_date, new_notes, session_id))
     connection.commit()
     if cursor.rowcount > 0:
-        print("Session has been deleted.")
+        print("Session has been updated.")
     else:
-        print("No session found with the given id.")
-    print()
+        print("Session not found with the given id.")
+
 
 def update_session():
     cursor = connection.cursor()
@@ -55,12 +83,7 @@ def update_session():
         break
     new_date = input("What should be the new date of the session? ")
     new_notes = input("What should be the new notes for the session? ")
-    cursor.execute("UPDATE sessions SET date = %s, notes = %s WHERE id = %s", (new_date, new_notes, session_id))
-    connection.commit()
-    if cursor.rowcount > 0:
-        print("Session has been updated.")
-    else:
-        print("Session not found with the given id.")
+    update_session_in_db(session_id, new_date, new_notes)
     print()
 
 def manage_sessions():

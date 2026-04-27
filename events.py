@@ -4,6 +4,16 @@ from credentials import my_host, my_user, my_password, my_database
 from db import connection
 
 
+
+def add_event_to_db(session_id, description):
+    if not session_id or not description:
+        raise ValueError("All fields must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO events (session_id, description) VALUES (%s, %s)", (session_id, description))
+    connection.commit()
+    print("Event has been added.")
+
+
 def add_event():
     cursor = connection.cursor()
     while True:
@@ -17,9 +27,8 @@ def add_event():
             continue
         break
     description = input("What is the description of the event? ")
-    cursor.execute("INSERT INTO events (session_id, description) VALUES (%s, %s)", (session_id, description))
-    connection.commit()
-    print("Event has been added.")
+    add_event_to_db(session_id, description)
+    print()
 
 def display_all_events():
     cursor = connection.cursor()
@@ -48,6 +57,20 @@ def show_events_for_session():
         print(f"ID: {row[0]} | Session ID: {row[1]} | Description: {row[2]}")
     print("----------------------------\n")
 
+
+
+def delete_event_from_db(event_id):
+    if not event_id:
+        raise ValueError("Event ID must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM events WHERE id = %s", (event_id,))
+    connection.commit()
+    if cursor.rowcount > 0:
+        print("Event has been deleted.")
+    else:
+        print("No event found with the given id.")
+
+
 def delete_event():
     cursor = connection.cursor()
     while True:
@@ -61,13 +84,21 @@ def delete_event():
             print("Event does not exist\n")
             continue
         break
-    cursor.execute("DELETE FROM events WHERE id = %s", (event_id,))
+    delete_event_from_db(event_id)
+    print()
+
+
+def update_event_in_db(event_id, new_description):
+    if not event_id or not new_description:
+        raise ValueError("Event ID and new description must be provided.")
+    cursor = connection.cursor()
+    cursor.execute("UPDATE events SET description = %s WHERE id = %s", (new_description, event_id))
     connection.commit()
     if cursor.rowcount > 0:
-        print("Event has been deleted.")
+        print("Event has been updated.")
     else:
-        print("No event found with the given id.")
-    print()
+        print("Event not found with the given id.")
+
 
 def update_event():
     cursor = connection.cursor()
@@ -83,12 +114,7 @@ def update_event():
             continue
         break
     new_description = input("What should be the new description for the event? ")
-    cursor.execute("UPDATE events SET description = %s WHERE id = %s", (new_description, event_id))
-    connection.commit()
-    if cursor.rowcount > 0:
-        print("Event has been updated.")
-    else:
-        print("Event not found with the given id.")
+    update_event_in_db(event_id, new_description)
     print()
 
 def manage_events():

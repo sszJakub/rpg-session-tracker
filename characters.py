@@ -5,6 +5,8 @@ from db import connection
 
 
 def add_character_to_db(name, race, character_class, player_id):
+    if not name or not race or not character_class or not player_id:
+        raise ValueError("All fields must be provided.")
     cursor = connection.cursor()
     cursor.execute("INSERT INTO characters (name, race, character_class, player_id) VALUES (%s, %s, %s, %s)", (name, race, character_class, player_id))
     connection.commit()
