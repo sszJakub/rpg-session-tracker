@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import mysql.connector
 from mysql.connector import Error
 from credentials import my_host, my_user, my_password, my_database
@@ -8,8 +10,12 @@ from db import connection
 def add_session_to_db(date, notes):
     if not date or not notes:
         raise ValueError("Date and notes must be provided.")
+    try:
+        parsed_date = datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError("Invalid date format. Use YYYY-MM-DD")
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO sessions (date, notes) VALUES (%s, %s)", (date, notes))
+    cursor.execute("INSERT INTO sessions (date, notes) VALUES (%s, %s)", (parsed_date, notes))
     connection.commit()
     print("Session has been added.")
 

@@ -78,6 +78,8 @@ def show_character_details():
 
 
 def delete_character_from_db(character_id):
+    if not character_id:
+        raise ValueError("Character ID must be provided.")
     cursor = connection.cursor()
     cursor.execute("DELETE FROM characters WHERE id = %s", (character_id,))
     connection.commit()
@@ -106,6 +108,8 @@ def delete_character():
 
 
 def update_character_in_db(character_id, new_name, new_race, new_class, new_player_id):
+    if not character_id:
+        raise ValueError("Character ID must be provided.")
     cursor = connection.cursor()
     cursor.execute("UPDATE characters SET name = %s, race = %s, character_class = %s, player_id = %s WHERE id = %s", (new_name, new_race, new_class, new_player_id, character_id))
     connection.commit()

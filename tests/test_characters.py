@@ -4,7 +4,7 @@ from characters import *
 import time
 
 
-
+# Positive test cases
 def test_add_character_to_db():
     try:
         character_name = f"Test_Character_to_add_{int(time.time())}"
@@ -93,9 +93,87 @@ def test_update_character_in_db():
 
 
 
+# Negative test cases
+def test_add_character_to_db_empty_fields():
+    with pytest.raises(ValueError):
+        add_character_to_db("", "", "", "")
+
+def test_add_character_to_db_none_name():
+    player_id = None
+    try:
+        test_player_name = f"Test_Player_for_Character_{int(time.time())}"
+        add_player_to_db(test_player_name)
+        cursor = connection.cursor(buffered=True)
+        cursor.execute("SELECT id FROM players WHERE name = %s", (test_player_name,))
+        result = cursor.fetchone()
+        player_id = result[0]
+        character_name = None
+        race = f"Test_Race_{int(time.time())}"
+        character_class = f"Test_Class_{int(time.time())}"
+        cursor = connection.cursor(buffered=True)
+        with pytest.raises(ValueError):
+            add_character_to_db(character_name, race, character_class, player_id)
+    finally:
+        delete_player_from_db(player_id)
+
+def test_add_character_to_db_none_race():
+    player_id = None
+    try:
+        test_player_name = f"Test_Player_for_Character_{int(time.time())}"
+        add_player_to_db(test_player_name)
+        cursor = connection.cursor(buffered=True)
+        cursor.execute("SELECT id FROM players WHERE name = %s", (test_player_name,))
+        result = cursor.fetchone()
+        player_id = result[0]
+        character_name = f"Test_Character_to_add_{int(time.time())}"
+        race = None
+        character_class = f"Test_Class_{int(time.time())}"
+        cursor = connection.cursor(buffered=True)
+        with pytest.raises(ValueError):
+            add_character_to_db(character_name, race, character_class, player_id)
+    finally:
+        delete_player_from_db(player_id)
+
+def test_add_character_to_db_none_character_class():
+    player_id = None
+    try:
+        test_player_name = f"Test_Player_for_Character_{int(time.time())}"
+        add_player_to_db(test_player_name)
+        cursor = connection.cursor(buffered=True)
+        cursor.execute("SELECT id FROM players WHERE name = %s", (test_player_name,))
+        result = cursor.fetchone()
+        player_id = result[0]
+        character_name = f"Test_Character_to_add_{int(time.time())}"
+        race = f"Test_Race_{int(time.time())}"
+        character_class = None
+        cursor = connection.cursor(buffered=True)
+        with pytest.raises(ValueError):
+            add_character_to_db(character_name, race, character_class, player_id)
+    finally:
+        delete_player_from_db(player_id)
+
+def test_add_character_to_db_none_player_id():
+    player_id = None
+    character_name = f"Test_Character_to_add_{int(time.time())}"
+    race = f"Test_Race_{int(time.time())}"
+    character_class = f"Test_Class_{int(time.time())}"
+    with pytest.raises(ValueError):
+        add_character_to_db(character_name, race, character_class, player_id)
 
 
 
+
+
+
+
+def test_delete_character_from_db_invalid_id():
+    with pytest.raises(ValueError):
+        delete_character_from_db("")
+
+
+def test_update_character_in_db_invalid_id():
+    with pytest.raises(ValueError):
+        update_character_in_db("", "", "", "", "")
 
 
 
